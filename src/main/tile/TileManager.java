@@ -3,6 +3,7 @@ package main.tile;
 import main.GamePanel;
 import main.helper.Constant;
 import main.helper.FileRead;
+import main.helper.GameCamera;
 import main.helper.Image;
 
 import java.awt.*;
@@ -12,11 +13,13 @@ public class TileManager {
     Tile[] tiles;
     GamePanel gp;
     Integer[][] tileMap;
+    GameCamera camera;
 
-    public TileManager(GamePanel gp){
+    public TileManager(GamePanel gp, GameCamera camera){
         this.gp = gp;
         tiles = new Tile[10000000];
         this.tileMap = FileRead.getMap("res/tiles/tilemap.txt");
+        this.camera = camera;
     }
 
     public void loadTiles(){
@@ -26,10 +29,11 @@ public class TileManager {
     private void getTileImage() {
             Integer[] unique = FileRead.uniqueMap("res/tiles/tilemap.txt");
             for (int i = 0; i < unique.length; i++){
-                System.out.println(unique[i]);
+//                System.out.println(unique[i]);
 //                tiles[unique[i]] = new Tile(getTilefromId(unique[i]));
 //                tiles[unique[i]].setImage(getTilefromId(unique[i]));
-                System.out.println("Tile " + unique[i] + " loaded");
+//                System.out.println("Tile " + unique[i] + " loaded");
+//                System.out.println(i);
             }
     }
 
@@ -41,7 +45,7 @@ public class TileManager {
 //                }
 //            }
 //        }
-        g2.drawImage(Image.readSingle("res/tiles/fullmap.png"), 0, -Constant.MAP_START_Y-offsetY, gp);
+        g2.drawImage(Image.readSingle("res/tiles/fullmap.png"), 0, -Constant.MAP_START_Y-camera.getyOffset(), gp);
     }
 
     private BufferedImage getTilefromId(int id){

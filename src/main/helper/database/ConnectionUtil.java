@@ -3,6 +3,8 @@ package main.helper.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.sql.SQLException;
+
 public class ConnectionUtil {
     private static HikariDataSource dataSource;
     static {

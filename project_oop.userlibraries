@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="HikariCP-5.1.0">
+    <archive path="E:/M S I/Download/HikariCP-5.1.0.jar" />
+  </library>
+  <library name="junit.jupiter">
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/jupiter/junit-jupiter/5.9.1/junit-jupiter-5.9.1.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.1/junit-jupiter-api-5.9.1.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/platform/junit-platform-commons/1.9.1/junit-platform-commons-1.9.1.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.9.1/junit-jupiter-params-5.9.1.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.1/junit-jupiter-engine-5.9.1.jar" />
+    <archive path="C:/Users/M S I/.m2/repository/org/junit/platform/junit-platform-engine/1.9.1/junit-platform-engine-1.9.1.jar" />
+  </library>
+  <library name="slf4j-api-2.0.13-javadoc">
+    <archive path="E:/M S I/Download/slf4j-api-2.0.13-javadoc.jar" />
+  </library>
+  <library name="slf4j.simple">
+    <archive path="D:/kuliah/PPBO/project_oop/lib/slf4j-simple-2.0.3.jar" />
+    <archive path="D:/kuliah/PPBO/project_oop/lib/slf4j-api-2.0.3.jar" />
+  </library>
+  <library name="mysql-connector-j-8.3.0">
+    <archive path="E:/M S I/Download/MySqlJdbcDriver/mysql-connector-j-8.3.0.jar" />
+  </library>
+</eclipse-userlibraries>
+

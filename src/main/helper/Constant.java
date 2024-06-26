@@ -11,10 +11,10 @@ public class Constant {
     public static final int MAX_SCREEN_ROW = WINDOW_HEIGHT / TILE_SIZE_SCALED;
     public static final int SCREEN_WIDTH = TILE_SIZE_SCALED * MAX_SCREEN_COL + 45;
     public static final int SCREEN_HEIGHT = TILE_SIZE_SCALED * MAX_SCREEN_ROW;
-    public static final int MAP_START_Y = 2080-SCREEN_HEIGHT;
+    public static final int MAP_START_Y = 1990-SCREEN_HEIGHT;
 
 //    FPS
-    public static final int FPS = 60;
+    public static final int FPS = 120;
     public static final double DRAW_INTERVAL = 1000000000/FPS;
     public static double NEXT_DRAW_TIME = System.nanoTime() + DRAW_INTERVAL;
 

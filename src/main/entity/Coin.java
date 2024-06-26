@@ -3,6 +3,7 @@ package main.entity;
 import main.entity.interfaces.Drawable;
 import main.entity.interfaces.Spawner;
 import main.helper.Constant;
+import main.helper.GameCamera;
 
 import java.awt.*;
 import java.io.IOException;
@@ -35,10 +36,10 @@ public class Coin extends GameObject implements Spawner<Coin>, Drawable {
         return false;
     }
 
-    public void draw(Graphics2D g2, int offsetY) {
+    public void draw(Graphics2D g2, GameCamera camera) {
         if (coinImage != null) {
-            setScreenY(getY() - offsetY);
-            g2.drawImage(coinImage, getX(), getY()-offsetY, getWidth(), getHeight(), null);
+            setScreenY(getY() - camera.getyOffset());
+            g2.drawImage(coinImage, getX(), getY()-camera.getyOffset(), getWidth(), getHeight(), null);
         }
     }
 

@@ -1,5 +1,6 @@
 package main.helper.database.repository;
 
+import main.entity.LeaderboardScore;
 import main.entity.User;
 import main.helper.database.ConnectionUtil;
 
@@ -12,36 +13,20 @@ import java.util.ArrayList;
 public class UserRepository implements UserInterface{
 
     @Override
-    public void insertUser(String username, String password, int highScore, int coinCount) {
+    public void insertUser(String username, int highScore, int coinCount, int speed, int magnet) {
         try {
             Connection connection = ConnectionUtil.getDataSource().getConnection();
-            String query = "INSERT INTO user (username, password, high_score, coin_count) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO user (username, high_score, coin_count, speed, magnet) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.setInt(3, highScore);
-            preparedStatement.setInt(4, coinCount);
+            preparedStatement.setInt(2, highScore);
+            preparedStatement.setInt(3, coinCount);
+            preparedStatement.setInt(4, speed);
+            preparedStatement.setInt(5, magnet);
             preparedStatement.executeUpdate();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean selectUser(String username, String password) {
-        try {
-            Connection connection = ConnectionUtil.getDataSource().getConnection();
-            String query = "SELECT * FROM user WHERE username = ? AND password = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.executeQuery();
-            connection.close();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 
@@ -79,15 +64,18 @@ public class UserRepository implements UserInterface{
         }
     }
 
+
+
     @Override
-    public User selectUser(int id) {
+    public User selectUser(String username) {
         try {
             Connection connection = ConnectionUtil.getDataSource().getConnection();
-            String query = "SELECT * FROM user WHERE id = ?";
+            String query = "SELECT * FROM user WHERE username = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
-            connection.close();
+            resultSet.next();
+//            connection.close();
             return resultSetToUser(resultSet);
 
         } catch (SQLException e) {
@@ -103,8 +91,115 @@ public class UserRepository implements UserInterface{
             String query = "SELECT * FROM user";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
-            connection.close();
+//            connection.close();
             return resultSetToUserList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean updateSpeed(int id, int speed) {
+        try {
+            Connection connection = ConnectionUtil.getDataSource().getConnection();
+            String query = "UPDATE user SET speed = ? WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, speed);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+            connection.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public ArrayList<LeaderboardScore> getLeaderboard() {
+        try {
+            Connection connection = ConnectionUtil.getDataSource().getConnection();
+            String query = "SELECT username, coin_count FROM user ORDER BY coin_count DESC LIMIT 3";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+//            connection.close();
+            return resultSetToLeaderboardScoreList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean updateMagnet(int id, int magnet) {
+        try {
+            Connection connection = ConnectionUtil.getDataSource().getConnection();
+            String query = "UPDATE user SET magnet = ? WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, magnet);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+//            connection.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public int getMagnet(int id) {
+        try{
+            Connection connection = ConnectionUtil.getDataSource().getConnection();
+            String query = "SELECT magnet FROM user WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+//            connection.close();
+            return resultSet.getInt("magnet");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
+
+    @Override
+    public int getSpeed(int id) {
+        try{
+            Connection connection = ConnectionUtil.getDataSource().getConnection();
+            String query = "SELECT speed FROM user WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+//            connection.close();
+            return resultSet.getInt("speed");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private ArrayList<LeaderboardScore> resultSetToLeaderboardScoreList(ResultSet resultSet) {
+        try {
+            ArrayList<LeaderboardScore> leaderboardScores = new ArrayList<>();
+            while (resultSet.next()) {
+                leaderboardScores.add(resultSetToLeaderboardScore(resultSet));
+            }
+            return leaderboardScores;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private LeaderboardScore resultSetToLeaderboardScore(ResultSet resultSet) {
+        try {
+            return new LeaderboardScore(resultSet.getString("username"), resultSet.getInt("coin_count"));
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -126,7 +221,7 @@ public class UserRepository implements UserInterface{
 
     private User resultSetToUser(ResultSet resultSet) {
         try {
-            return new User(resultSet.getString("username"), resultSet.getString("password"), resultSet.getInt("id"), resultSet.getInt("high_score"), resultSet.getInt("coin_count"));
+            return new User(resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("high_score"), resultSet.getInt("coin_count"), resultSet.getInt("magnet"), resultSet.getInt("speed"));
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

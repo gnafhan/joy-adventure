@@ -2,6 +2,7 @@ package main.entity;
 
 import main.entity.interfaces.Drawable;
 import main.helper.Constant;
+import main.helper.GameCamera;
 import main.helper.Image;
 
 import java.awt.*;
@@ -34,7 +35,7 @@ public class Car extends GameObject implements Drawable {
 
     public boolean checkCollision(Player player){
         Rectangle carRect = new Rectangle(getX(), getScreenY(), getWidth(), getHeight());
-        Rectangle playerRect = new Rectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        Rectangle playerRect = new Rectangle(player.getX(), player.getScreenY(), player.getWidth(), player.getHeight());
         return carRect.intersects(playerRect);
     }
 
@@ -46,14 +47,14 @@ public class Car extends GameObject implements Drawable {
         this.screenY = screenY;
     }
 
-    public void draw(Graphics2D g2, int offsetY) {
+    public void draw(Graphics2D g2, GameCamera camera) {
         if (carImage != null) {
             int x = getX();
-            int y = getY();
+            int y = getY() - camera.getyOffset();
             int width = getWidth();
             int height = getHeight();
-            setScreenY(y - offsetY);
-            g2.drawImage(carImage, x, y - offsetY, width, height, null);
+            setScreenY(y);
+            g2.drawImage(carImage, x, (int) y , width, height, null);
         } else {
             g2.setColor(Color.RED);
             g2.fillRect(getX(), getY(), getWidth(), getHeight());

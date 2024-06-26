@@ -2,10 +2,8 @@ package main.entity;
 
 import main.entity.interfaces.Drawable;
 import main.entity.interfaces.Movable;
-import main.helper.Constant;
-import main.helper.FileRead;
+import main.helper.*;
 import main.helper.Image;
-import main.helper.KeyHandler;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,18 +15,21 @@ public class Player extends GameObject implements Drawable, Movable {
     private int speed;
     private Direction direction;
     private int score;
+    private int magnet;
     private int spriteCounter = 0;
     private int spriteNum = 0;
+    private int screenY;
     private String imagePath;
     private BufferedImage image;
     private ArrayList<String> pos;
     private String sprite;
+    private GameCamera camera;
     public int offsetY=0;
 
     private boolean isIdle = true;
     HashMap<String, ArrayList<String>> dataMap;
 
-    public Player(int x, int y, int width, int height, int speed, Direction direction, int score, String imagePath, String textPath) {
+    public Player(int x, int y, int width, int height, int speed, Direction direction, int score, String imagePath, String textPath, GameCamera camera) {
         super(x, y, width, height);
         this.speed = speed;
         this.direction = direction;
@@ -37,11 +38,11 @@ public class Player extends GameObject implements Drawable, Movable {
         dataMap = FileRead.read(textPath);
         pos = dataMap.get("sprite5");
         this.image = Image.read(imagePath, Integer.parseInt(pos.get(0)), Integer.parseInt(pos.get(1)), Integer.parseInt(pos.get(2)), Integer.parseInt(pos.get(3)));
-//        g2.setBackground(Color.BLUE);
+        this.camera = camera;
     }
 
     private boolean isValidMove(int x, int y){
-        return x >= 0 && x <= 520 && y >= 0 && y <= 682;
+        return x >= 0 && x <= 520 && y >= -1260 && y <= 435;
     }
 
     private boolean checkCollision(GameObject obj){
@@ -58,24 +59,33 @@ public class Player extends GameObject implements Drawable, Movable {
         return false;
     }
 
+    public int getMagnet() {
+        return magnet;
+    }
+
+    public void setMagnet(int magnet) {
+        this.magnet = magnet;
+    }
+
     public void move_up(){
         if (isValidMove(getX(), getY() - speed)){
-            if (Constant.SCREEN_HEIGHT/2 > getY() && offsetY > -1305){
-                offsetY -= speed;
-                System.out.println("offsetY: " + offsetY);
-            } else {
-                setY(getY() - speed);
+            if ((Constant.SCREEN_HEIGHT/2 > getY() && offsetY > -1305)){
+//                offsetY -= speed;
+//                System.out.println("offsetY: " + offsetY);
+//            } else {
             }
+            System.out.println("Offset y: " + camera.getyOffset() + " Player y: " + getY());
+                setY(getY() - speed);
         }
     }
     public void move_down(){
         if (isValidMove(getX(), getY() + speed)){
-            if (Constant.SCREEN_HEIGHT/2 < getY() && offsetY < 0){
-                offsetY += speed;
-                System.out.println("offsetY: " + offsetY);
-            } else {
+//            if (Constant.SCREEN_HEIGHT/2 < getY() && offsetY < 0 ){
+//                offsetY += speed;
+//                System.out.println("offsetY: " + offsetY);
+//            } else {
                 setY(getY() + speed);
-            }
+//            }
         }
     }
     public void move_left(){
@@ -95,7 +105,7 @@ public class Player extends GameObject implements Drawable, Movable {
             input.poll();
             for (GameObject obj: objects){
                 if (checkCollision(obj)){
-                    System.out.println("Collision detected");
+//                    System.out.println("Collision detected");
                     break;
                 }
             }
@@ -236,8 +246,32 @@ public class Player extends GameObject implements Drawable, Movable {
             }
         }
         this.image = Image.read(imagePath, Integer.parseInt(pos.get(0)), Integer.parseInt(pos.get(1)), Integer.parseInt(pos.get(2)), Integer.parseInt(pos.get(3)));
-        g2.drawImage(image, getX(), getY(), getWidth(), getHeight(), null);
+//        System.out.println(getY());
+        if (getY() > -873){
+            screenY = Math.max(Constant.WINDOW_HEIGHT/2,getY());
+            g2.drawImage(image, getX(), Math.max(Constant.WINDOW_HEIGHT/2,getY()), getWidth(), getHeight(), null);
+        } else{
+            screenY = (Constant.WINDOW_HEIGHT/2) - (Math.abs(getY()+873));
+            g2.drawImage(image, getX(), (Constant.WINDOW_HEIGHT/2) - (Math.abs(getY()+873)), getWidth(),getHeight(), null);
+        }
     }
 
+    @Override
+    public Rectangle getBounds() {
+        if (Session.getUser()!=null){
+            int magnets = Session.getUser().getMagnet();
+            int baseMagnet = 50;
+            return new Rectangle(getX() - baseMagnet * magnets /2, screenY - baseMagnet * magnets/2, getWidth() + baseMagnet * magnets, getHeight() + baseMagnet * magnets);
+        }
+        return new Rectangle(getX(), screenY, getWidth(), getHeight());
+    }
+
+    public Rectangle getBoundCar(){
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
+
+    public int getScreenY() {
+        return screenY;
+    }
 }
 
