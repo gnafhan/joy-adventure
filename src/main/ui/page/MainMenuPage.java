@@ -75,6 +75,7 @@ public class MainMenuPage extends JPanel {
                 mainFrame.switchToPage("Shop");
             } else {
                 JOptionPane.showMessageDialog(null, "Please login first");
+                SoundManager.soundManager.stopMainMusic();
                 mainFrame.switchToPage("Login");
             }
         });
