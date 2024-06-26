@@ -75,8 +75,7 @@ public class UserRepository implements UserInterface{
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-//            connection.close();
-            return resultSetToUser(resultSet);
+            return resultSetToUser(resultSet, connection);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,8 +90,7 @@ public class UserRepository implements UserInterface{
             String query = "SELECT * FROM user";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
-//            connection.close();
-            return resultSetToUserList(resultSet);
+            return resultSetToUserList(resultSet, connection);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -123,8 +121,7 @@ public class UserRepository implements UserInterface{
             String query = "SELECT username, coin_count FROM user ORDER BY coin_count DESC LIMIT 3";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
-//            connection.close();
-            return resultSetToLeaderboardScoreList(resultSet);
+            return resultSetToLeaderboardScoreList(resultSet, connection);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -140,7 +137,7 @@ public class UserRepository implements UserInterface{
             preparedStatement.setInt(1, magnet);
             preparedStatement.setInt(2, id);
             preparedStatement.executeUpdate();
-//            connection.close();
+            connection.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,8 +154,9 @@ public class UserRepository implements UserInterface{
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-//            connection.close();
-            return resultSet.getInt("magnet");
+            int magnet = resultSet.getInt("magnet");
+            connection.close();
+            return magnet;
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
@@ -176,20 +174,22 @@ public class UserRepository implements UserInterface{
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-//            connection.close();
-            return resultSet.getInt("speed");
+            int speed = resultSet.getInt("speed");
+            connection.close();
+            return speed;
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         }
     }
 
-    private ArrayList<LeaderboardScore> resultSetToLeaderboardScoreList(ResultSet resultSet) {
+    private ArrayList<LeaderboardScore> resultSetToLeaderboardScoreList(ResultSet resultSet, Connection connection) {
         try {
             ArrayList<LeaderboardScore> leaderboardScores = new ArrayList<>();
             while (resultSet.next()) {
                 leaderboardScores.add(resultSetToLeaderboardScore(resultSet));
             }
+            connection.close();
             return leaderboardScores;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -206,13 +206,25 @@ public class UserRepository implements UserInterface{
         }
     }
 
-    private ArrayList<User> resultSetToUserList(ResultSet resultSet) {
+    private ArrayList<User> resultSetToUserList(ResultSet resultSet, Connection connection) {
         try {
             ArrayList<User> users = new ArrayList<>();
             while (resultSet.next()) {
                 users.add(resultSetToUser(resultSet));
             }
+            connection.close();
             return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private User resultSetToUser(ResultSet resultSet, Connection connection) {
+        try {
+            User user= new User(resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("high_score"), resultSet.getInt("coin_count"), resultSet.getInt("magnet"), resultSet.getInt("speed"));
+            connection.close();
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -221,7 +233,8 @@ public class UserRepository implements UserInterface{
 
     private User resultSetToUser(ResultSet resultSet) {
         try {
-            return new User(resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("high_score"), resultSet.getInt("coin_count"), resultSet.getInt("magnet"), resultSet.getInt("speed"));
+            User user= new User(resultSet.getString("username"), resultSet.getInt("id"), resultSet.getInt("high_score"), resultSet.getInt("coin_count"), resultSet.getInt("magnet"), resultSet.getInt("speed"));
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

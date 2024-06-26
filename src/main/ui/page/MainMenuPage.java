@@ -53,7 +53,7 @@ public class MainMenuPage extends JPanel {
             // Code to start the game goes here
             if (Session.getUser()!= null){
                 gamePanel.getPlayer().setSpeed(Session.getUserRepository().getSpeed(Session.getUser().getId()) + 1);
-//                gamePanel.getPlayer().setMagnet(Session.getUserRepository().getMagnet(Session.getUser().getId()) + 1);
+                gamePanel.getPlayer().setMagnet(Session.getUserRepository().getMagnet(Session.getUser().getId()) + 1);
             }
             gamePanel.spawnCollectables();
             gamePanel.setGameOver(false);
